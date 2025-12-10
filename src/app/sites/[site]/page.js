@@ -7,7 +7,7 @@ import { notFound } from "next/navigation";
 
 export async function generateMetadata({ params }) {
     const { site } = await params;
-    const store = await getStore(site);
+    const { store } = await getStore(site);
 
     return {
         title: store ? `Categories - ${store.name}` : "Shop",
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }) {
 
 export default async function ShopPage({ params }) {
     const { site } = await params;
-    const store = await getStore(site);
+    const { store } = await getStore(site);
 
     if (!store) return notFound();
 

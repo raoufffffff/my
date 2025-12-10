@@ -10,7 +10,7 @@ export async function generateMetadata({ params }) {
     const { site } = await params;
 
     // 2. Fetch the store data (Next.js deduplicates this request automatically)
-    const store = await getStore(site);
+    const { store } = await getStore(site);
 
     // 3. Handle case where store doesn't exist
     if (!store) {
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }) {
 // 2. تصميم الـ Layout المشترك (Header & Footer)
 export default async function StoreLayout({ children, params }) {
     const { site } = await params;
-    const store = await getStore(site);
+    const { store } = await getStore(site);
 
     if (!store) return notFound();
 
