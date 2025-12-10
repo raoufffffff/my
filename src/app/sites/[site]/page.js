@@ -1,44 +1,72 @@
+export const revalidate = false;
+export const dynamic = "force-static";
+import ProductList from "@/components/ProductList";
+import { getStore } from "@/lib/api";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
-// دالة جلب البيانات مع تفعيل الـ ISR Tags
-async function getStoreFromApi(subdomain) {
-    try {
-        // 👇 السر هنا: تفعيل التاج باسم المتجر
-        const res = await fetch('https://true-fit-dz-api.vercel.app/user', {
-            next: {
-                revalidate: false,
-                tags: [`store-${subdomain}`], // مثال: store-lazemdeals
-                // revalidate: 3600 // (اختياري) تحديث تلقائي كل ساعة كاحتياط
-            }
-        });
+export async function generateMetadata({ params }) {
+    const { site } = await params;
+    const store = await getStore(site);
 
-        if (!res.ok) throw new Error('Failed to fetch');
-
-        const data = await res.json();
-
-        // ملاحظة: الأفضل مستقبلاً جعل الـ API يجلب متجراً واحداً فقط بدلاً من البحث في المصفوفة
-        // GET /api/store?subdomain=lazemdeals
-        const store = data.result.find((user) => user.repoName === subdomain);
-
-        return store || null;
-    } catch (error) {
-        console.error("API Error:", error);
-        return null;
-    }
+    return {
+        title: store ? `Categories - ${store.name}` : "Shop",
+        description: "Browse our categories",
+    };
 }
 
 export default async function ShopPage({ params }) {
     const { site } = await params;
-
-    const store = await getStoreFromApi(site);
+    const store = await getStore(site);
 
     if (!store) return notFound();
 
-    // ... باقي الكود كما هو
     return (
-        <div style={{ padding: 50 }}>
-            <h1 className="text-4xl font-bold">{store.username || store.name}</h1>
-            {/* ... */}
+        <div className="min-h-screen  mt-16">
+            {store.Categories.length > 0 && (
+                <section className="py-16 bg-white" id="categories">
+                    <div className="container mx-auto px-4 md:px-8">
+                        {/* Header */}
+                        <div className="text-center mb-10">
+                            <h2 className="text-3xl font-bold text-gray-900 mb-4">تصفح حسب الأقسام</h2>
+                            <div className="w-16 h-1 bg-indigo-600 mx-auto rounded-full"></div>
+                        </div>
+
+                        {/* 👇 SCROLLABLE CONTAINER */}
+                        {/* Changed grid to flex + overflow-x-auto */}
+                        <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory scrollbar-hide">
+                            {store.Categories.map((cat) => (
+                                <div
+                                    key={cat.id}
+                                    // 👇 Added min-w-[160px] to fix width and flex-shrink-0 so they don't squish
+                                    className="group flex-shrink-0 min-w-[160px] md:min-w-[180px] snap-center flex flex-col items-center p-6 bg-white rounded-2xl border border-gray-100 hover:border-indigo-200 hover:shadow-xl transition-all duration-300 cursor-pointer text-center"
+                                >
+                                    {/* Image Container */}
+                                    <div className="relative w-24 h-24 mb-4 rounded-full bg-gray-50 group-hover:bg-indigo-50 flex items-center justify-center overflow-hidden transition-colors duration-300">
+                                        <Image
+                                            alt={cat.name}
+                                            src={cat.image}
+                                            fill
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                            className="object-contain p-4 group-hover:scale-110 transition-transform duration-300"
+                                        />
+                                    </div>
+
+                                    {/* Text Content */}
+                                    <h3 className="font-bold text-gray-800 text-lg mb-1 group-hover:text-indigo-600 transition-colors whitespace-nowrap">
+                                        {cat.name}
+                                    </h3>
+                                    <p className="text-sm text-gray-400 font-medium">
+                                        {cat.count} منتجات
+                                    </p>
+                                </div>
+                            ))}
+
+                        </div>
+                    </div>
+                </section>
+            )}
+            <ProductList subdomain={site} id={store._id} />
         </div>
     );
 }
