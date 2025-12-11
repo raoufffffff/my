@@ -10,7 +10,7 @@ export async function generateMetadata({ params }) {
     const { store } = await getStore(site);
 
     return {
-        title: store ? `Categories - ${store.name}` : "Shop",
+        title: store ? store.website.store_name : "Shop",
         description: "Browse our categories",
     };
 }
@@ -18,13 +18,12 @@ export async function generateMetadata({ params }) {
 export default async function ShopPage({ params }) {
     const { site } = await params;
     const { store } = await getStore(site);
-
     if (!store) return notFound();
-
+    const Categories = store.Categories.filter(e => e.show)
     return (
-        <div className="min-h-screen  mt-16">
-            {store.Categories.length > 0 && (
-                <section className="py-16 bg-white" id="categories">
+        <div className="min-h-screen">
+            {Categories.length > 0 && (
+                <section className=" bg-white" id="categories">
                     <div className="container mx-auto px-4 md:px-8">
                         {/* Header */}
                         <div className="text-center mb-10">
@@ -34,10 +33,10 @@ export default async function ShopPage({ params }) {
 
                         {/* 👇 SCROLLABLE CONTAINER */}
                         {/* Changed grid to flex + overflow-x-auto */}
-                        <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory scrollbar-hide">
-                            {store.Categories.map((cat) => (
+                        <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory a scrollbar-hide">
+                            {Categories.map((cat, i) => (
                                 <div
-                                    key={cat.id}
+                                    key={i}
                                     // 👇 Added min-w-[160px] to fix width and flex-shrink-0 so they don't squish
                                     className="group flex-shrink-0 min-w-[160px] md:min-w-[180px] snap-center flex flex-col items-center p-6 bg-white rounded-2xl border border-gray-100 hover:border-indigo-200 hover:shadow-xl transition-all duration-300 cursor-pointer text-center"
                                 >
@@ -66,7 +65,7 @@ export default async function ShopPage({ params }) {
                     </div>
                 </section>
             )}
-            <ProductList subdomain={site} id={store._id} />
+            <ProductList mainColor={store.website.main_color} subdomain={site} id={store._id} />
         </div>
     );
 }

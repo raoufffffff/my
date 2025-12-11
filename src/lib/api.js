@@ -24,6 +24,21 @@ export async function getStore(subdomain) {
 }
 
 
+export async function getProducts(subdomain, id) {
+    // افترض أن لديك API لجلب المنتجات بناءً على اسم المتجر
+    let res = await fetch(`https://true-fit-dz-api.vercel.app/item/my/${id}`, {
+        cache: 'force-cache',
+        next: { tags: [`store-${subdomain}`] } // ✅ ونفس التاج موجود هنا أيضاً!
+    }
+    );
+
+    if (!res.ok) return [];
+    res = res.json();
+
+    return res
+}
+
+
 export async function getProduct(id, subdomain) {
     try {
         const res = await fetch(`https://true-fit-dz-api.vercel.app/item/${id}`, {

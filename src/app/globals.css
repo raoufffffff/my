@@ -1,2 +1,5 @@
 @import "tailwindcss";
 
+.a::-webkit-scrollbar {
+    width: 0px;
+  }

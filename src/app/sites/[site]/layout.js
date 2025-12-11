@@ -1,5 +1,6 @@
 export const revalidate = false
 export const dynamic = "force-static"
+import Pixels from "@/components/Analytics/Pixels";
 import Header from "@/components/Header";
 import { getStore } from "@/lib/api"; // الدالة التي اتفقنا عليها سابقاً
 import { notFound } from "next/navigation";
@@ -41,12 +42,13 @@ export default async function StoreLayout({ children, params }) {
     if (!store) return notFound();
 
     return (
-        <section className={store.theme === 'dark' ? 'dark-theme' : 'light-theme'}>
+        <div>
+            <Pixels fbId={store.website.facebookPixel} tiktokId={store.website.TiktokPixel} />
             {/* هذا الهيدر سيظهر في كل صفحات المتجر */}
             <Header store={store.website} />
 
             {/* هنا يتم عرض محتوى الصفحات الداخلية (page.tsx, about/page.tsx) */}
-            <main className="min-h-screen">
+            <main className="min-h-screen mt-32">
                 {children}
             </main>
 
@@ -54,6 +56,7 @@ export default async function StoreLayout({ children, params }) {
             <footer className="p-4 bg-gray-100 text-center mt-10">
                 <p>جميع الحقوق محفوظة © {new Date().getFullYear()} {store.username}</p>
             </footer>
-        </section>
+        </div>
+
     );
 }
