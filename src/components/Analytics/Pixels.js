@@ -12,8 +12,8 @@ export default function Pixels({ fbId, tiktokId }) {
     // تتبع تغيير الصفحة (لأن Next.js تطبيق صفحة واحدة SPA)
     useEffect(() => {
         if (fbId.id) fbq.pageview(fbId.id);
-        if (tiktokId.id) ttq.pageview(tiktokId.id);
-    }, [pathname, fbId.id, tiktokId.id]);
+        if (tiktokId?.id) ttq.pageview(tiktokId.id);
+    }, [pathname, fbId.id, tiktokId?.id]);
 
     return (
         <>
@@ -40,7 +40,7 @@ export default function Pixels({ fbId, tiktokId }) {
             )}
 
             {/* --- 2. TikTok Pixel Script --- */}
-            {tiktokId.id && (
+            {tiktokId?.id && (
                 <Script
                     id="tiktok-pixel"
                     strategy="afterInteractive"
