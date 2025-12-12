@@ -1,5 +1,4 @@
 export const revalidate = false
-export const dynamic = "force-static"
 import Pixels from "@/components/Analytics/Pixels";
 import Header from "@/components/Header";
 import { getStore } from "@/lib/api"; // الدالة التي اتفقنا عليها سابقاً
