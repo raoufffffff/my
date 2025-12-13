@@ -11,14 +11,14 @@ export default function Pixels({ fbId, tiktokId }) {
 
     // تتبع تغيير الصفحة (لأن Next.js تطبيق صفحة واحدة SPA)
     useEffect(() => {
-        if (fbId.id) fbq.pageview(fbId.id);
+        if (fbId?.id) fbq.pageview(fbId.id);
         if (tiktokId?.id) ttq.pageview(tiktokId.id);
-    }, [pathname, fbId.id, tiktokId?.id]);
+    }, [pathname, fbId?.id, tiktokId?.id]);
 
     return (
         <>
             {/* --- 1. Facebook Pixel Script --- */}
-            {fbId.id && (
+            {fbId?.id && (
                 <Script
                     id="fb-pixel"
                     strategy="afterInteractive" // لا يعطل تحميل الصفحة
